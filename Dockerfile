@@ -1,4 +1,4 @@
-# Multi-stage build for production
+# ----- Build Stage -----
 FROM node:18-alpine AS build
 
 WORKDIR /app
@@ -12,20 +12,24 @@ RUN npm ci --only=production
 # Copy source code
 COPY . .
 
+# Inject backend URL into the build
+ARG REACT_APP_API_URL
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
+
 # Build the app for production
 RUN npm run build
 
-# Production stage with nginx
+# ----- Nginx Serve Stage -----
 FROM nginx:alpine
 
-# Copy built app to nginx
-COPY --from=build /app/build /usr/share/nginx/html
-
-# Copy nginx configuration for SPA
+# Copy custom nginx config
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# Cloud Run uses PORT environment variable
+# Copy built frontend from previous stage
+COPY --from=build /app/build /usr/share/nginx/html
+
+# Expose port expected by Cloud Run
 EXPOSE 8080
 
-# Start nginx
+# Run Nginx in foreground
 CMD ["nginx", "-g", "daemon off;"]
