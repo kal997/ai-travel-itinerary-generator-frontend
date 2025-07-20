@@ -1,70 +1,329 @@
-# Getting Started with Create React App
+# AI Travel Itinerary Generator - Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[![React](https://img.shields.io/badge/React-18.2-blue.svg)](https://reactjs.org/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Docker](https://img.shields.io/badge/Docker-Ready-green.svg)](https://www.docker.com/)
 
-## Available Scripts
+The frontend application for the AI Travel Itinerary Generator - a modern, responsive web interface that allows users to create personalized travel plans powered by Google's Gemini AI.
 
-In the project directory, you can run:
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) and provides a seamless user experience for managing AI-generated travel itineraries.
+
+## 🎯 Features
+
+- **User Authentication**: Secure login and registration system
+- **Interactive Dashboard**: Manage all your travel itineraries in one place
+- **AI-Powered Generation**: Create detailed day-by-day travel plans based on your preferences
+- **Real-time Preview**: See generated itineraries before saving
+- **CRUD Operations**: Create, read, update, and delete itineraries
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
+- **Persistent Sessions**: Stay logged in with secure token storage
+
+## 📋 Table of Contents
+
+- [Prerequisites](#prerequisites)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Configuration](#configuration)
+- [Available Scripts](#available-scripts)
+- [API Integration](#api-integration)
+- [Components Overview](#components-overview)
+- [Styling](#styling)
+- [Testing](#testing)
+- [Deployment](#deployment)
+- [Docker Support](#docker-support)
+- [Troubleshooting](#troubleshooting)
+
+## 🔧 Prerequisites
+
+- Node.js 18+ and npm
+- Backend API running (see [backend repository](https://github.com/kal997/ai-travel-itinerary-generator-backend/tree/main))
+- Modern web browser
+- Docker (optional, for containerized deployment)
+
+## 📁 Project Structure
+
+```
+frontend/
+├── public/
+│   ├── index.html          # HTML template
+│   └── favicon.ico         # App icon
+├── src/
+│   ├── components/         # React components
+│   │   ├── Dashboard.js    # Main dashboard view
+│   │   ├── Login.js        # Login form
+│   │   ├── Register.js     # Registration form
+│   │   └── ItineraryForm.js # Itinerary creation form
+│   ├── services/
+│   │   └── api.js          # API service layer
+│   ├── App.js              # Main App component
+│   ├── App.css             # Global styles
+│   └── index.js            # Application entry point
+├── nginx.conf              # Production nginx config
+├── Dockerfile              # Production container
+├── Dockerfile.dev          # Development container
+└── package.json            # Dependencies and scripts
+```
+
+## 🚀 Getting Started
+
+### Local Development Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd frontend
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   # Create .env file in root directory
+   echo "REACT_APP_API_URL=http://localhost:8000" > .env
+   ```
+
+4. **Start the development server**
+   ```bash
+   npm start
+   ```
+
+   The app will open at [http://localhost:3000](http://localhost:3000)
+
+### Docker Development Setup
+
+```bash
+# Build and run with Docker Compose
+docker-compose up --build
+
+# Or run standalone
+docker build -f Dockerfile.dev -t travel-frontend-dev .
+docker run -p 3000:3000 travel-frontend-dev
+```
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+# API Configuration
+REACT_APP_API_URL=http://localhost:8000  # Your backend URL
+
+```
+
+### Proxy Configuration
+
+For local development, the `package.json` includes a proxy setting:
+```json
+"proxy": "http://localhost:8000"
+```
+
+This helps avoid CORS issues during development.
+
+## 📜 Available Scripts
 
 ### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Runs the app in development mode with hot reloading.
 
 ### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Launches the test runner in interactive watch mode.
 
 ### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Creates an optimized production build in the `build` folder.
 
 ### `npm run eject`
+**Note: This is irreversible!** Ejects from Create React App for full configuration control.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 🔌 API Integration
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+The frontend communicates with the backend through a centralized API service (`src/services/api.js`):
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Authentication
+- **POST `/register`** - User registration
+- **POST `/token`** - User login (OAuth2 password flow)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Itinerary Management
+- **POST `/api/itinerary/generate`** - Generate AI itinerary
+- **POST `/api/itinerary`** - Save generated itinerary
+- **GET `/api/itinerary`** - Fetch all user itineraries
+- **PATCH `/api/itinerary/{id}`** - Update existing itinerary
+- **DELETE `/api/itinerary/{id}`** - Delete itinerary
 
-## Learn More
+All authenticated endpoints require a Bearer token in the Authorization header.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 🧩 Components Overview
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### App.js
+Main application component handling:
+- Authentication state management
+- Route-like navigation between Login, Register, and Dashboard
+- Token persistence in localStorage
 
-### Code Splitting
+### Dashboard.js
+Core functionality component featuring:
+- Itinerary list display with grid layout
+- Create/Edit form with dynamic interest inputs
+- AI generation with real-time preview
+- Full CRUD operations
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Login.js & Register.js
+Authentication components with:
+- Form validation
+- Error handling
+- Loading states
+- Navigation between auth modes
 
-### Analyzing the Bundle Size
+### API Service (api.js)
+Centralized Axios instance with:
+- Base URL configuration
+- Auth token injection
+- Form data handling for OAuth2
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 🎨 Styling
 
-### Making a Progressive Web App
+The application uses vanilla CSS with:
+- Mobile-first responsive design
+- CSS Grid for itinerary layouts
+- Flexbox for component layouts
+- Custom color scheme matching the travel theme
+- Smooth transitions and hover effects
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Key style features:
+- Responsive breakpoint at 768px
+- Card-based design for itineraries
+- Clean form styling with validation states
+- Loading states and animations
 
-### Advanced Configuration
+## 🧪 Testing
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Basic test setup with React Testing Library:
 
-### Deployment
+```bash
+# Run tests
+npm test
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+# Run tests with coverage
+npm test -- --coverage
+```
 
-### `npm run build` fails to minify
+Current test coverage includes:
+- App component rendering
+- Basic component mounting tests
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 🚢 Deployment
+
+### Production Build
+
+1. **Build the application**
+   ```bash
+   # Set the backend URL for production
+   REACT_APP_API_URL=https://your-backend-url.com npm run build
+   ```
+
+2. **Deploy to Google Cloud Run**
+   ```bash
+   # Build Docker image
+   docker build -t gcr.io/YOUR_PROJECT_ID/travel-frontend .
+   
+   # Push to Container Registry
+   docker push gcr.io/YOUR_PROJECT_ID/travel-frontend
+   
+   # Deploy to Cloud Run
+   gcloud run deploy travel-frontend \
+     --image gcr.io/YOUR_PROJECT_ID/travel-frontend \
+     --platform managed \
+     --region us-central1 \
+     --allow-unauthenticated \
+     --set-env-vars REACT_APP_API_URL=https://your-backend-url.com
+   ```
+
+## 🐳 Docker Support
+
+### Production Dockerfile
+Multi-stage build for optimized production images:
+- Stage 1: Node.js build environment
+- Stage 2: Nginx serving static files
+
+### Development Dockerfile
+Simple Node.js container with hot reloading support.
+
+### Nginx Configuration
+Custom nginx.conf handles:
+- SPA routing (redirects all routes to index.html)
+- Static asset caching (1 year for JS/CSS/images)
+- MIME type configuration
+
+## 🔍 Troubleshooting
+
+### Common Issues
+
+1. **CORS Errors**
+   - Ensure backend CORS allows your frontend URL
+   - Check if proxy is configured for development
+
+2. **API Connection Failed**
+   - Verify REACT_APP_API_URL is set correctly
+   - Ensure backend is running and accessible
+
+3. **Build Failures**
+   - Clear node_modules and package-lock.json
+   - Run `npm install` fresh
+
+4. **Docker Port Issues**
+   - Ensure ports 3000 (dev) or 8080 (prod) are available
+   - Check Docker logs for specific errors
+
+### Debug Mode
+
+Enable debug logging:
+```javascript
+// In api.js
+if (process.env.NODE_ENV === 'development') {
+  axios.interceptors.request.use(request => {
+    console.log('Starting Request:', request);
+    return request;
+  });
+}
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Development Guidelines
+
+- Follow React best practices
+- Maintain component modularity
+- Add PropTypes or TypeScript (future enhancement)
+- Write tests for new features
+- Keep accessibility in mind (ARIA labels, semantic HTML)
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🔗 Related Repositories
+
+- [Backend API](../backend) - FastAPI backend with Gemini AI integration
+- [Infrastructure](../infrastructure) - Terraform/Kubernetes configs (if applicable)
+
+---
+
+## Technology Stack
+
+- **Framework**: React 18.2 (Create React App)
+- **HTTP Client**: Axios
+- **Styling**: Vanilla CSS with Flexbox/Grid
+- **Build Tool**: Webpack (via CRA)
+- **Container**: Docker with multi-stage builds
+- **Web Server**: Nginx (production)
+- **Package Manager**: npm
+- **Testing**: Jest + React Testing Library
