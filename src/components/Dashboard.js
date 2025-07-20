@@ -186,6 +186,7 @@ function Dashboard({ token, onLogout }) {
               <input
                 type="date"
                 value={startDate}
+                min={new Date().toISOString().split('T')[0]}  // today’s date in yyyy-mm-dd
                 onChange={(e) => setStartDate(e.target.value)}
                 required
               />
@@ -196,6 +197,7 @@ function Dashboard({ token, onLogout }) {
               <input
                 type="date"
                 value={endDate}
+                min={new Date().toISOString().split('T')[0]}
                 onChange={(e) => setEndDate(e.target.value)}
                 required
               />

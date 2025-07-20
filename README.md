@@ -224,7 +224,22 @@ Current test coverage includes:
    REACT_APP_API_URL=https://your-backend-url.com npm run build
    ```
 
-2. **Deploy to Google Cloud Run**
+2. **Build Docker image with production API URL**
+   ```bash
+   # Build with your production backend URL
+   docker build \
+     --build-arg REACT_APP_API_URL=https://your-backend-api.run.app \
+     -t gcr.io/YOUR_PROJECT_ID/travel-frontend .
+   
+   # Example with your actual URL:
+   docker build \
+     --build-arg REACT_APP_API_URL=https://ai-travel-itinerary-gen-app-backend-181459384771.us-central1.run.app \
+     -t gcr.io/YOUR_PROJECT_ID/travel-frontend .
+   ```
+   
+   **⚠️ Important**: The `--build-arg` is required because React environment variables are embedded at build time, not runtime.
+
+3. **Deploy to Google Cloud Run**
    ```bash
    # Build Docker image
    docker build -t gcr.io/YOUR_PROJECT_ID/travel-frontend .
